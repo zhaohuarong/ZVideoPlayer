@@ -1,3 +1,6 @@
+#include <QKeyEvent>
+#include <QTime>
+#include <QMessageBox>
 #include <QFileInfo>
 #include <QDebug>
 #include <QFileDialog>
@@ -9,6 +12,7 @@
 #include "VLCQtCore/Common.h"
 #include "VLCQtCore/Instance.h"
 #include "VLCQtCore/Media.h"
+#include "VLCQtCore/Video.h"
 #include "VLCQtCore/MediaPlayer.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -16,7 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     m_pInstance(NULL),
     m_pMedia(NULL),
-    m_pPlayer(NULL)
+    m_pPlayer(NULL),
+    m_bFullScreen(false)
 {
     ui->setupUi(this);
 
@@ -34,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Play, SIGNAL(triggered()), this, SLOT(onPlay()));
     connect(ui->action_Pause, SIGNAL(triggered()), this, SLOT(onPause()));
     connect(ui->action_Stop, SIGNAL(triggered()), this, SLOT(onStop()));
+
+    connect(ui->action_SnapShot, SIGNAL(triggered()), this, SLOT(onSnapShot()));
+    connect(ui->action_Full_Screen, SIGNAL(triggered()), this, SLOT(onFullScreen()));
+
+    connect(ui->action_About, SIGNAL(triggered()), this, SLOT(onAbout()));
 }
 
 MainWindow::~MainWindow()
@@ -41,10 +51,24 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+    switch(e->key())
+    {
+    case Qt::Key_F:
+        onFullScreen();
+        break;
+    case Qt::Key_P:
+        onSnapShot();
+        break;
+    }
+}
+
 void MainWindow::onOpenLocal()
 {
     QString path = QFileDialog::getOpenFileName(this, tr("Open file"), QDir::homePath(), tr("Videos (*.avi *.mkv *.wmv *.rmvb *.mp4)"));
-    if(path.trimmed().isEmpty())
+    path = path.trimmed();
+    if(path.isEmpty())
         return;
     qDebug() << path;
     if(m_pMedia != NULL)
@@ -60,7 +84,8 @@ void MainWindow::onOpenLocal()
 void MainWindow::onOpenUrl()
 {
     QString url = QInputDialog::getText(this, tr("Open Url"), tr("Enter the URL you want to play"));
-    if(url.trimmed().isEmpty())
+    url = url.trimmed();
+    if(url.isEmpty())
         return;
     if(m_pMedia != NULL)
     {
@@ -91,4 +116,29 @@ void MainWindow::onStop()
     if(m_pPlayer == NULL)
         return;
     m_pPlayer->stop();
+}
+
+void MainWindow::onAbout()
+{
+    QMessageBox::aboutQt(this);
+}
+
+void MainWindow::onSnapShot()
+{
+    if(m_pMedia == NULL || m_pPlayer == NULL)
+        return;
+    QString strPath = m_pMedia->currentLocation();
+    QDir dir = QFileInfo(strPath).dir();
+    bool is = m_pPlayer->video()->takeSnapshot(dir.absolutePath() + "/" + QTime::currentTime().toString("HH-mm-ss") + ".jpg");
+    Q_UNUSED(is);
+}
+
+void MainWindow::onFullScreen()
+{
+    m_bFullScreen = !m_bFullScreen;
+    m_bFullScreen ? showFullScreen() : showNormal();
+    ui->mainToolBar->setVisible(!m_bFullScreen);
+    menuBar()->setVisible(!m_bFullScreen);
+    statusBar()->setVisible(!m_bFullScreen);
+    ui->seek->setVisible(!m_bFullScreen);
 }

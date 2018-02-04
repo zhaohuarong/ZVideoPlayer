@@ -15,6 +15,21 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="VlcWidgetVideo" name="video" native="true">
       <property name="sizePolicy">
@@ -65,8 +80,16 @@
     </property>
     <addaction name="action_About"/>
    </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="action_SnapShot"/>
+    <addaction name="action_Full_Screen"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
+   <addaction name="menu_View"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -100,7 +123,7 @@
   </action>
   <action name="action_Stop">
    <property name="text">
-    <string>&amp;Stop</string>
+    <string>S&amp;top</string>
    </property>
   </action>
   <action name="action_About">
@@ -111,6 +134,16 @@
   <action name="action_Pause">
    <property name="text">
     <string>P&amp;ause</string>
+   </property>
+  </action>
+  <action name="action_SnapShot">
+   <property name="text">
+    <string>S&amp;napShot</string>
+   </property>
+  </action>
+  <action name="action_Full_Screen">
+   <property name="text">
+    <string>&amp;Full Screen</string>
    </property>
   </action>
  </widget>
