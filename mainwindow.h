@@ -7,6 +7,10 @@ namespace Ui {
 class MainWindow;
 }
 
+class VlcMedia;
+class VlcInstance;
+class VlcMediaPlayer;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -15,8 +19,15 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void onOpenLocal();
+    void onOpenUrl();
+
 private:
     Ui::MainWindow *ui;
+    VlcInstance *m_pInstance;
+    VlcMedia *m_pMedia;
+    VlcMediaPlayer *m_pPlayer;
 };
 
 #endif // MAINWINDOW_H
