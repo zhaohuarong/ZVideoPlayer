@@ -22,6 +22,9 @@ public:
 private slots:
     void onOpenLocal();
     void onOpenUrl();
+    void onPlay();
+    void onPause();
+    void onStop();
 
 private:
     Ui::MainWindow *ui;

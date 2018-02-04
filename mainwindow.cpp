@@ -1,3 +1,4 @@
+#include <QFileInfo>
 #include <QDebug>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -29,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Exit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionOpen_Local, SIGNAL(triggered()), this, SLOT(onOpenLocal()));
     connect(ui->actionOpen_URL, SIGNAL(triggered()), this, SLOT(onOpenUrl()));
+
+    connect(ui->action_Play, SIGNAL(triggered()), this, SLOT(onPlay()));
+    connect(ui->action_Pause, SIGNAL(triggered()), this, SLOT(onPause()));
+    connect(ui->action_Stop, SIGNAL(triggered()), this, SLOT(onStop()));
 }
 
 MainWindow::~MainWindow()
@@ -48,6 +53,7 @@ void MainWindow::onOpenLocal()
         m_pMedia = NULL;
     }
     m_pMedia = new VlcMedia(path, true, m_pInstance);
+    setWindowTitle(QFileInfo(path).fileName());
     m_pPlayer->open(m_pMedia);
 }
 
@@ -62,5 +68,27 @@ void MainWindow::onOpenUrl()
         m_pMedia = NULL;
     }
     m_pMedia = new VlcMedia(url, m_pInstance);
+    setWindowTitle(QFileInfo(url).fileName());
     m_pPlayer->open(m_pMedia);
+}
+
+void MainWindow::onPlay()
+{
+    if(m_pPlayer == NULL)
+        return;
+    m_pPlayer->play();
+}
+
+void MainWindow::onPause()
+{
+    if(m_pPlayer == NULL)
+        return;
+    m_pPlayer->pause();
+}
+
+void MainWindow::onStop()
+{
+    if(m_pPlayer == NULL)
+        return;
+    m_pPlayer->stop();
 }
