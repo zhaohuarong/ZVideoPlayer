@@ -21,6 +21,8 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent *e);
+    void dragEnterEvent(QDragEnterEvent *e);
+    void dropEvent(QDropEvent *e);
 
 private slots:
     void onOpenLocal();

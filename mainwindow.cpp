@@ -1,3 +1,4 @@
+#include <QMimeData>
 #include <QKeyEvent>
 #include <QTime>
 #include <QMessageBox>
@@ -24,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_bFullScreen(false)
 {
     ui->setupUi(this);
+
+    setAcceptDrops(true);
 
     m_pInstance = new VlcInstance(VlcCommon::args(), this);
     m_pPlayer = new VlcMediaPlayer(m_pInstance);
@@ -61,6 +64,29 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     case Qt::Key_P:
         onSnapShot();
         break;
+    }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *e)
+{
+    e->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *e)
+{
+    QList<QUrl> urls = e->mimeData()->urls();
+    if(urls.isEmpty())
+        return ;
+
+    foreach (QUrl u, urls) {
+        //qDebug()<<u.toString();
+        qDebug() << u.toLocalFile();
+    }
+
+    if(urls.count() > 1)
+    {
+        QMessageBox::information(this, "", "only 1 file");
+        return;
     }
 }
 
