@@ -7,6 +7,9 @@
 *.lai
 *.dylib
 
+release/
+debug/
+
 # Qt-es
 
 /.qmake.cache
