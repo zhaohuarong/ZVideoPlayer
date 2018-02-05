@@ -86,6 +86,7 @@
     </property>
     <addaction name="action_SnapShot"/>
     <addaction name="action_Full_Screen"/>
+    <addaction name="actionStausBar"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -138,12 +139,20 @@
   </action>
   <action name="action_SnapShot">
    <property name="text">
-    <string>S&amp;napShot</string>
+    <string>&amp;SnapShot</string>
    </property>
   </action>
   <action name="action_Full_Screen">
    <property name="text">
     <string>&amp;Full Screen</string>
+   </property>
+  </action>
+  <action name="actionStausBar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>StatusBar</string>
    </property>
   </action>
  </widget>

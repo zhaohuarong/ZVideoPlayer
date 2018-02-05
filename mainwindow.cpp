@@ -22,11 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pInstance(NULL),
     m_pMedia(NULL),
     m_pPlayer(NULL),
-    m_bFullScreen(false)
+    m_bFullScreen(false),
+    m_bPlaying(false)
 {
     ui->setupUi(this);
 
     setAcceptDrops(true);
+    statusBar()->setVisible(false);
 
     m_pInstance = new VlcInstance(VlcCommon::args(), this);
     m_pPlayer = new VlcMediaPlayer(m_pInstance);
@@ -43,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Pause, SIGNAL(triggered()), this, SLOT(onPause()));
     connect(ui->action_Stop, SIGNAL(triggered()), this, SLOT(onStop()));
 
+    connect(ui->actionStausBar, SIGNAL(triggered(bool)), this, SLOT(onShowStatusBar(bool)));
     connect(ui->action_SnapShot, SIGNAL(triggered()), this, SLOT(onSnapShot()));
     connect(ui->action_Full_Screen, SIGNAL(triggered()), this, SLOT(onFullScreen()));
 
@@ -58,6 +61,9 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     switch(e->key())
     {
+    case Qt::Key_Space:
+        m_bPlaying ? onPause() : onPlay();
+        break;
     case Qt::Key_F:
         onFullScreen();
         break;
@@ -97,14 +103,7 @@ void MainWindow::onOpenLocal()
     if(path.isEmpty())
         return;
     qDebug() << path;
-    if(m_pMedia != NULL)
-    {
-        delete m_pMedia;
-        m_pMedia = NULL;
-    }
-    m_pMedia = new VlcMedia(path, true, m_pInstance);
-    setWindowTitle(QFileInfo(path).fileName());
-    m_pPlayer->open(m_pMedia);
+    openFile(path);
 }
 
 void MainWindow::onOpenUrl()
@@ -113,14 +112,7 @@ void MainWindow::onOpenUrl()
     url = url.trimmed();
     if(url.isEmpty())
         return;
-    if(m_pMedia != NULL)
-    {
-        delete m_pMedia;
-        m_pMedia = NULL;
-    }
-    m_pMedia = new VlcMedia(url, m_pInstance);
-    setWindowTitle(QFileInfo(url).fileName());
-    m_pPlayer->open(m_pMedia);
+    openUrl(url);
 }
 
 void MainWindow::onPlay()
@@ -128,6 +120,7 @@ void MainWindow::onPlay()
     if(m_pPlayer == NULL)
         return;
     m_pPlayer->play();
+    m_bPlaying = true;
 }
 
 void MainWindow::onPause()
@@ -135,6 +128,7 @@ void MainWindow::onPause()
     if(m_pPlayer == NULL)
         return;
     m_pPlayer->pause();
+    m_bPlaying = false;
 }
 
 void MainWindow::onStop()
@@ -142,6 +136,7 @@ void MainWindow::onStop()
     if(m_pPlayer == NULL)
         return;
     m_pPlayer->stop();
+    m_bPlaying = false;
 }
 
 void MainWindow::onAbout()
@@ -167,4 +162,35 @@ void MainWindow::onFullScreen()
     menuBar()->setVisible(!m_bFullScreen);
     statusBar()->setVisible(!m_bFullScreen);
     ui->seek->setVisible(!m_bFullScreen);
+}
+
+void MainWindow::onShowStatusBar(bool checked)
+{
+    ui->statusBar->setVisible(checked);
+}
+
+void MainWindow::openFile(const QString &strPath)
+{
+    if(m_pMedia != NULL)
+    {
+        delete m_pMedia;
+        m_pMedia = NULL;
+    }
+    m_pMedia = new VlcMedia(strPath, true, m_pInstance);
+    setWindowTitle(QFileInfo(strPath).fileName());
+    m_pPlayer->open(m_pMedia);
+    m_bPlaying = true;
+}
+
+void MainWindow::openUrl(const QString &strUrl)
+{
+    if(m_pMedia != NULL)
+    {
+        delete m_pMedia;
+        m_pMedia = NULL;
+    }
+    m_pMedia = new VlcMedia(strUrl, m_pInstance);
+    setWindowTitle(QFileInfo(strUrl).fileName());
+    m_pPlayer->open(m_pMedia);
+    m_bPlaying = true;
 }

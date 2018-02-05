@@ -33,6 +33,11 @@ private slots:
     void onAbout();
     void onSnapShot();
     void onFullScreen();
+    void onShowStatusBar(bool checked);
+
+private:
+    inline void openFile(const QString &strPath);
+    inline void openUrl(const QString &strUrl);
 
 private:
     Ui::MainWindow *ui;
@@ -40,6 +45,8 @@ private:
     VlcMedia *m_pMedia;
     VlcMediaPlayer *m_pPlayer;
     bool m_bFullScreen;
+    bool m_bPlaying;
+    QStringList m_lstPlayList;
 };
 
 #endif // MAINWINDOW_H
