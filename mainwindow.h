@@ -10,6 +10,7 @@ class MainWindow;
 class VlcMedia;
 class VlcInstance;
 class VlcMediaPlayer;
+class QListWidgetItem;
 
 class MainWindow : public QMainWindow
 {
@@ -34,10 +35,13 @@ private slots:
     void onSnapShot();
     void onFullScreen();
     void onShowStatusBar(bool checked);
+    void onShowPlaylist(bool checked);
+    void onPlaylistDoubleClicked(QListWidgetItem *item);
 
 private:
-    inline void openFile(const QString &strPath);
+    inline void openFile(int index);
     inline void openUrl(const QString &strUrl);
+    inline void updatePlaylist();
 
 private:
     Ui::MainWindow *ui;
@@ -47,6 +51,7 @@ private:
     bool m_bFullScreen;
     bool m_bPlaying;
     QStringList m_lstPlayList;
+    int m_nCurrentIndex;
 };
 
 #endif // MAINWINDOW_H

@@ -23,12 +23,14 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pMedia(NULL),
     m_pPlayer(NULL),
     m_bFullScreen(false),
-    m_bPlaying(false)
+    m_bPlaying(false),
+    m_nCurrentIndex(-1)
 {
     ui->setupUi(this);
 
     setAcceptDrops(true);
     statusBar()->setVisible(false);
+    ui->playlist->setVisible(false);
 
     m_pInstance = new VlcInstance(VlcCommon::args(), this);
     m_pPlayer = new VlcMediaPlayer(m_pInstance);
@@ -45,11 +47,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Pause, SIGNAL(triggered()), this, SLOT(onPause()));
     connect(ui->action_Stop, SIGNAL(triggered()), this, SLOT(onStop()));
 
-    connect(ui->actionStausBar, SIGNAL(triggered(bool)), this, SLOT(onShowStatusBar(bool)));
     connect(ui->action_SnapShot, SIGNAL(triggered()), this, SLOT(onSnapShot()));
     connect(ui->action_Full_Screen, SIGNAL(triggered()), this, SLOT(onFullScreen()));
+    connect(ui->actionStausBar, SIGNAL(triggered(bool)), this, SLOT(onShowStatusBar(bool)));
+    connect(ui->actionPlaylist, SIGNAL(triggered(bool)), this, SLOT(onShowPlaylist(bool)));
 
     connect(ui->action_About, SIGNAL(triggered()), this, SLOT(onAbout()));
+
+    connect(ui->playlist, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(onPlaylistDoubleClicked(QListWidgetItem *)));
 }
 
 MainWindow::~MainWindow()
@@ -85,25 +90,28 @@ void MainWindow::dropEvent(QDropEvent *e)
         return ;
 
     foreach (QUrl u, urls) {
-        //qDebug()<<u.toString();
         qDebug() << u.toLocalFile();
+        m_lstPlayList << u.toLocalFile();
     }
 
-    if(urls.count() > 1)
+    if(urls.count() == m_lstPlayList.count())
     {
-        QMessageBox::information(this, "", "only 1 file");
-        return;
+        m_nCurrentIndex = 0;
+        openFile(m_nCurrentIndex);
     }
+
+    updatePlaylist();
 }
 
 void MainWindow::onOpenLocal()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Open file"), QDir::homePath(), tr("Videos (*.avi *.mkv *.wmv *.rmvb *.mp4)"));
-    path = path.trimmed();
-    if(path.isEmpty())
+    QStringList lstPath = QFileDialog::getOpenFileNames(this, tr("Open file"), QDir::homePath(), tr("Videos (*.avi *.mkv *.wmv *.rmvb *.mp4)"));
+    if(lstPath.count() == 0)
         return;
-    qDebug() << path;
-    openFile(path);
+    m_lstPlayList = lstPath;
+    m_nCurrentIndex = 0;
+    openFile(m_nCurrentIndex);
+    updatePlaylist();
 }
 
 void MainWindow::onOpenUrl()
@@ -169,13 +177,29 @@ void MainWindow::onShowStatusBar(bool checked)
     ui->statusBar->setVisible(checked);
 }
 
-void MainWindow::openFile(const QString &strPath)
+void MainWindow::onShowPlaylist(bool checked)
+{
+    ui->playlist->setVisible(checked);
+}
+
+void MainWindow::onPlaylistDoubleClicked(QListWidgetItem *item)
+{
+    if(item == NULL)
+        return;
+    int row = ui->playlist->row(item);
+    if(row < 0 || row >= ui->playlist->count())
+        return;
+    openFile(row);
+}
+
+void MainWindow::openFile(int index)
 {
     if(m_pMedia != NULL)
     {
         delete m_pMedia;
         m_pMedia = NULL;
     }
+    QString strPath = m_lstPlayList.at(index);
     m_pMedia = new VlcMedia(strPath, true, m_pInstance);
     setWindowTitle(QFileInfo(strPath).fileName());
     m_pPlayer->open(m_pMedia);
@@ -193,4 +217,16 @@ void MainWindow::openUrl(const QString &strUrl)
     setWindowTitle(QFileInfo(strUrl).fileName());
     m_pPlayer->open(m_pMedia);
     m_bPlaying = true;
+}
+
+void MainWindow::updatePlaylist()
+{
+    ui->playlist->clear();
+
+    foreach(QString path, m_lstPlayList)
+    {
+        QListWidgetItem *item = new QListWidgetItem(ui->playlist);
+        item->setText(QFileInfo(path).fileName());
+        ui->playlist->addItem(item);
+    }
 }

@@ -14,23 +14,8 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="spacing">
-     <number>0</number>
-    </property>
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <widget class="VlcWidgetVideo" name="video" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -43,7 +28,17 @@
       </property>
      </widget>
     </item>
-    <item>
+    <item row="0" column="1" rowspan="2">
+     <widget class="QListWidget" name="playlist">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
      <widget class="VlcWidgetSeek" name="seek" native="true"/>
     </item>
    </layout>
@@ -87,6 +82,7 @@
     <addaction name="action_SnapShot"/>
     <addaction name="action_Full_Screen"/>
     <addaction name="actionStausBar"/>
+    <addaction name="actionPlaylist"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -153,6 +149,14 @@
    </property>
    <property name="text">
     <string>StatusBar</string>
+   </property>
+  </action>
+  <action name="actionPlaylist">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Playlist</string>
    </property>
   </action>
  </widget>
