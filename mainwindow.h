@@ -19,6 +19,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void addToPlaylist(const QString &strPath);
 
 protected:
     void keyPressEvent(QKeyEvent *e);

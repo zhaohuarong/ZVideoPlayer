@@ -70,11 +70,13 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         m_bPlaying ? onPause() : onPlay();
         break;
     case Qt::Key_F:
-        onFullScreen();
+        ui->action_Full_Screen->trigger();
         break;
-    case Qt::Key_P:
-        onSnapShot();
+    case Qt::Key_S:
+        ui->action_SnapShot->trigger();
         break;
+    case Qt::Key_L:
+        ui->actionPlaylist->trigger();
     }
 }
 
@@ -190,6 +192,20 @@ void MainWindow::onPlaylistDoubleClicked(QListWidgetItem *item)
     if(row < 0 || row >= ui->playlist->count())
         return;
     openFile(row);
+}
+
+void MainWindow::addToPlaylist(const QString &strPath)
+{
+    if(!QFileInfo(strPath).exists())
+        return;
+    m_lstPlayList << strPath;
+    if(m_lstPlayList.count() == 1)
+    {
+        m_nCurrentIndex = 0;
+        openFile(m_nCurrentIndex);
+    }
+
+    updatePlaylist();
 }
 
 void MainWindow::openFile(int index)
