@@ -55,6 +55,31 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_About, SIGNAL(triggered()), this, SLOT(onAbout()));
 
     connect(ui->playlist, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(onPlaylistDoubleClicked(QListWidgetItem *)));
+
+    ui->actionOpen_Local->setIcon(QIcon(":/image/open_file.png"));
+    ui->mainToolBar->addAction(ui->actionOpen_Local);
+    ui->actionOpen_URL->setIcon(QIcon(":/image/open_url.png"));
+    ui->mainToolBar->addAction(ui->actionOpen_URL);
+    ui->action_Exit->setIcon(QIcon(":/image/exit.png"));
+    ui->mainToolBar->addSeparator();
+    ui->action_Play->setIcon(QIcon(":/image/play.png"));
+    ui->mainToolBar->addAction(ui->action_Play);
+    ui->action_Pause->setIcon(QIcon(":/image/pause.png"));
+    ui->mainToolBar->addAction(ui->action_Pause);
+    ui->action_Stop->setIcon(QIcon(":/image/stop.png"));
+    ui->mainToolBar->addAction(ui->action_Stop);
+    ui->mainToolBar->addSeparator();
+    ui->action_SnapShot->setIcon(QIcon(":/image/snapshot.png"));
+    ui->mainToolBar->addAction(ui->action_SnapShot);
+    ui->action_Full_Screen->setIcon(QIcon(":/image/fullscreen.png"));
+    ui->mainToolBar->addAction(ui->action_Full_Screen);
+    ui->actionStausBar->setIcon(QIcon(":/image/statusbar.png"));
+    ui->mainToolBar->addAction(ui->actionStausBar);
+    ui->actionPlaylist->setIcon(QIcon(":/image/playlist.png"));
+    ui->mainToolBar->addAction(ui->actionPlaylist);
+    ui->mainToolBar->addSeparator();
+    ui->action_About->setIcon(QIcon(":/image/about.png"));
+    ui->mainToolBar->addAction(ui->action_About);
 }
 
 MainWindow::~MainWindow()
@@ -151,7 +176,11 @@ void MainWindow::onStop()
 
 void MainWindow::onAbout()
 {
-    QMessageBox::aboutQt(this);
+    QMessageBox msg(this);
+    msg.setIcon(QMessageBox::Information);
+    msg.setWindowTitle(tr("About"));
+    msg.setText("ZVideoPlay\nBase on VLC by zhaohuarong@gmail.com");
+    msg.exec();
 }
 
 void MainWindow::onSnapShot()
@@ -182,6 +211,13 @@ void MainWindow::onShowStatusBar(bool checked)
 void MainWindow::onShowPlaylist(bool checked)
 {
     ui->playlist->setVisible(checked);
+    if(checked && ui->playlist->count() > 0)
+    {
+        ui->playlist->setFocus();
+        if(m_nCurrentIndex < 0 || m_nCurrentIndex >= ui->playlist->count())
+            m_nCurrentIndex = 0;
+        ui->playlist->item(m_nCurrentIndex)->setSelected(true);
+    }
 }
 
 void MainWindow::onPlaylistDoubleClicked(QListWidgetItem *item)
@@ -215,6 +251,7 @@ void MainWindow::openFile(int index)
         delete m_pMedia;
         m_pMedia = NULL;
     }
+    m_nCurrentIndex = index;
     QString strPath = m_lstPlayList.at(index);
     m_pMedia = new VlcMedia(strPath, true, m_pInstance);
     setWindowTitle(QFileInfo(strPath).fileName());

@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/open_file.png</file>
+        <file>image/open_url.png</file>
+        <file>image/exit.png</file>
+        <file>image/pause.png</file>
+        <file>image/play.png</file>
+        <file>image/stop.png</file>
+        <file>image/about.png</file>
+        <file>image/fullscreen.png</file>
+        <file>image/playlist.png</file>
+        <file>image/snapshot.png</file>
+        <file>image/statusbar.png</file>
+    </qresource>
+</RCC>
