@@ -11,6 +11,7 @@ class VlcMedia;
 class VlcInstance;
 class VlcMediaPlayer;
 class QListWidgetItem;
+class VlcWidgetVolumeSlider;
 
 class MainWindow : public QMainWindow
 {
@@ -25,6 +26,7 @@ protected:
     void keyPressEvent(QKeyEvent *e);
     void dragEnterEvent(QDragEnterEvent *e);
     void dropEvent(QDropEvent *e);
+    void wheelEvent(QWheelEvent* e);
 
 private slots:
     void onOpenLocal();
@@ -53,6 +55,7 @@ private:
     bool m_bPlaying;
     QStringList m_lstPlayList;
     int m_nCurrentIndex;
+    VlcWidgetVolumeSlider *m_pVolumeSlider;
 };
 
 #endif // MAINWINDOW_H

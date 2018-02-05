@@ -16,6 +16,8 @@
 #include "VLCQtCore/Video.h"
 #include "VLCQtCore/MediaPlayer.h"
 
+#include "VLCQtWidgets/WidgetVolumeSlider.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -24,7 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pPlayer(NULL),
     m_bFullScreen(false),
     m_bPlaying(false),
-    m_nCurrentIndex(-1)
+    m_nCurrentIndex(-1),
+    m_pVolumeSlider(NULL)
 {
     ui->setupUi(this);
 
@@ -35,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pInstance = new VlcInstance(VlcCommon::args(), this);
     m_pPlayer = new VlcMediaPlayer(m_pInstance);
     m_pPlayer->setVideoWidget(ui->video);
+
+    m_pVolumeSlider = new VlcWidgetVolumeSlider(m_pPlayer);
 
     ui->video->setMediaPlayer(m_pPlayer);
     ui->seek->setMediaPlayer(m_pPlayer);
@@ -128,6 +133,12 @@ void MainWindow::dropEvent(QDropEvent *e)
     }
 
     updatePlaylist();
+}
+
+void MainWindow::wheelEvent(QWheelEvent *e)
+{
+    int delta = e->delta();
+    (delta > 0) ? m_pVolumeSlider->volumeDown() : m_pVolumeSlider->volumeUp();
 }
 
 void MainWindow::onOpenLocal()
